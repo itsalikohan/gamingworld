@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>مدیریت بازی‌های سایت</title>
+<style>
+:root{--bg:#3b3b3b;--bg2:#2f2f2f;--bar:#161616;--txt:#f2f2f2;--mut:#b5b5b5;--acc:#f5b81c;color-scheme:dark}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--txt);font-family:Vazirmatn,Tahoma,sans-serif;font-size:14px;line-height:1.7;min-height:100vh}
+header{background:var(--bar);padding:12px 16px;color:var(--acc);font-weight:700;font-size:16px}
+.wrap{max-width:720px;margin:0 auto;padding:16px 12px 90px}
+.card{background:var(--bg2);border-radius:4px;padding:16px;margin-bottom:14px}
+h2{font-size:15px;margin-bottom:10px}
+p.h{color:var(--mut);font-size:12px;margin:6px 0}
+.btn{background:var(--acc);color:#111;border:0;border-radius:3px;padding:8px 22px;font:inherit;font-weight:700;cursor:pointer}
+.btn:hover{background:#ffcc45}.btn:disabled{opacity:.5;cursor:default}
+.drop{border:2px dashed #666;border-radius:4px;padding:26px 12px;text-align:center;color:var(--mut);cursor:pointer}
+.drop.on,.drop:hover{border-color:var(--acc);color:var(--txt)}
+label{display:block;font-size:12px;color:var(--mut)}
+input:not([type=checkbox]):not([type=file]),textarea{width:100%;background:#555;border:0;border-radius:3px;padding:7px 10px;color:var(--txt);font:inherit;margin:3px 0 10px}
+input[type=file]{display:block;margin:4px 0 10px;font-size:12px;color:var(--txt)}
+.row{display:flex;align-items:center;gap:10px;background:#3b3b3b;border-radius:3px;padding:6px 10px;margin-bottom:6px}
+.row img{width:56px;height:32px;object-fit:cover;border-radius:2px;flex:none;background:#000}
+.row .n{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row small{color:var(--mut);font-size:11px;margin-inline-start:6px}
+.row button{background:none;border:0;font:inherit;font-size:12px;cursor:pointer;color:#ff8a8a}
+.row button.ok{color:#8ad7a0}
+.msg{font-size:12px;min-height:20px;color:var(--acc);margin:4px 0}
+.err{color:#ff8a8a}
+.bar{position:fixed;inset:auto 0 0 0;background:var(--bar);padding:10px 12px;display:flex;align-items:center;justify-content:center;gap:12px;font-size:12px;color:var(--mut)}
+.slot{border:2px dashed #666;border-radius:4px;padding:10px;margin:4px 0 12px;text-align:center;cursor:pointer;font-size:12px;color:var(--mut)}
+.slot.act{border-color:var(--acc);color:var(--txt)}
+.slot .sbtn{background:#555;color:var(--txt);border:0;border-radius:3px;padding:4px 14px;font:inherit;font-size:12px;cursor:pointer;margin:6px 0}
+.slot .prev{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.slot .pv{position:relative;display:inline-block}
+.slot .pv img{width:96px;height:54px;object-fit:cover;border-radius:3px;display:block;background:#000}
+.slot .pv button{position:absolute;top:-6px;inset-inline-start:-6px;width:20px;height:20px;border-radius:50%;border:0;background:#ff6b6b;color:#111;font-weight:700;cursor:pointer;line-height:1;padding:0}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header>مدیریت بازی‌های سایت</header>
+<div class="wrap">
+
+<div class="card" id="c1">
+<h2>۱) فایل سایت را انتخاب کن</h2>
+<div class="drop" id="drop">فایل <b>index.html</b> را اینجا رها کن یا کلیک کن</div>
+<input type="file" id="file" accept=".html,text/html" hidden>
+<div class="msg" id="m1"></div>
+<p class="h">باید آخرین نسخه‌ی index.html باشد (همانی که بخش «مدیریت» دارد).</p>
+</div>
+
+<div id="work" hidden>
+<div class="card">
+<h2>۲) بازی‌های داخل سایت</h2>
+<div id="list"></div>
+<div id="hidWrap" hidden><h2 style="margin-top:14px">بازی‌های مخفی‌شده</h2><div id="hidList"></div></div>
+<p class="h" id="noHid" hidden>این فایل قدیمی است و بازی‌های اصلی را نمی‌شود حذف کرد؛ فایل جدید سایت را بده.</p>
+</div>
+
+<div class="card">
+<h2>۳) افزودن بازی</h2>
+<label>نام بازی *<input id="f_name"></label>
+<label>ژانر<input id="f_genre" placeholder="مثلاً مسابقه‌ای"></label>
+<label>زبان<input id="f_lang" placeholder="مثلاً انگلیسی"></label>
+<label>پلتفرم<input id="f_plat" placeholder="مثلاً کامپیوتر"></label>
+<label>سازنده<input id="f_dev"></label>
+<label>فارسی‌ساز<input id="f_tr"></label>
+<label>پلتفرم دانلود<input id="f_src"></label>
+<label>توضیحات<textarea id="f_desc" rows="4"></textarea></label>
+<label>لینک دانلود *<input id="f_url" dir="ltr" placeholder="https://"></label>
+<label><input type="checkbox" id="f_fa"> نوار «فارسی‌سازی شده» روی کاور</label>
+<label>عکس اصلی بازی (برای کارت بازی و بالای صفحه‌ی بازی)</label><div class="slot" id="s_cover"></div>
+<label>عکس‌های داخل بازی (تا ۶ عکس، اختیاری؛ چند بار Ctrl+V بزنی همه اضافه می‌شوند)</label><div class="slot" id="s_shots"></div>
+<div class="msg" id="m3"></div>
+<button type="button" class="btn" id="add">افزودن بازی</button>
+</div>
+
+<div class="card">
+<h2>۴) افزودن بازی پولی</h2>
+<p class="h">بازی پولی فقط عکس اصلی، نام، لینک و قیمت می‌خواهد. در سایت بخش جدایی ندارد؛ بین بقیه‌ی بازی‌ها نمایش داده می‌شود، قیمتش بالا سمت چپ عکس می‌نشیند و با زدن روی آن مستقیم به همان لینک می‌رود. با زدن روی بازی، بازدیدکننده مستقیم به همان لینک می‌رود.</p>
+<div id="paidNote" class="msg err" hidden>این فایل قدیمی است و بخش پولی را ندارد؛ آخرین index.html را بده.</div>
+<h2 style="margin-top:8px">بازی‌های پولی فعلی</h2>
+<div id="plist"></div>
+<label>نام بازی *<input id="p_name"></label>
+<label>لینک بازی (سایتی که کاربر به آن می‌رود) *<input id="p_url" dir="ltr" placeholder="https://"></label>
+<label>قیمت بازی *<input id="p_price" maxlength="40" placeholder="مثلاً ۱۵۰,۰۰۰ تومان یا $59.99"></label>
+<label>عکس اصلی بازی *</label><div class="slot" id="s_pcover"></div>
+<div class="msg" id="mp"></div>
+<button type="button" class="btn" id="addp">افزودن بازی پولی</button>
+</div>
+</div>
+</div>
+
+<div class="bar" id="bar" hidden>
+<span id="chg">بدون تغییر</span>
+<button type="button" class="btn" id="save" disabled>دانلود index.html جدید</button>
+</div>
+
+<script>
+var SRC="",G=[],P=[],hasP=false,HIDE=[],BUILT=[],hasH=false,dirty=false,RESV={games:1,support:1,"herobrine-craft":1,"bamingmu-games":1};
+var EXG_RE=/(<script id="exg" type="application\/json">)([\s\S]*?)(<\/script>)/,EXH_RE=/(<script id="exh" type="application\/json">)([\s\S]*?)(<\/script>)/,EXP_RE=/(<script id="exp" type="application\/json">)([\s\S]*?)(<\/script>)/;
+function $(i){return document.getElementById(i)}
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
+function okImg(u){return typeof u==="string"&&/^data:image\/(webp|jpeg|png);base64,[A-Za-z0-9+\/=]+$/.test(u)}
+function okUrl(u){return typeof u==="string"&&/^https?:\/\//i.test(u)}
+function safeJson(v){return JSON.stringify(v).replace(/</g,"\\u003c")}
+function setDirty(){dirty=true;$("chg").textContent="تغییرات ذخیره‌نشده دارد";$("save").disabled=false}
+window.addEventListener("beforeunload",function(e){if(dirty){e.preventDefault();e.returnValue=""}});
+
+/* load file */
+var drop=$("drop"),file=$("file");
+drop.addEventListener("click",function(){file.click()});
+["dragenter","dragover"].forEach(function(t){drop.addEventListener(t,function(e){e.preventDefault();drop.classList.add("on")})});
+["dragleave","drop"].forEach(function(t){drop.addEventListener(t,function(e){e.preventDefault();drop.classList.remove("on")})});
+drop.addEventListener("drop",function(e){if(e.dataTransfer.files[0])read(e.dataTransfer.files[0])});
+file.addEventListener("change",function(){if(file.files[0])read(file.files[0])});
+function fail(t){$("m1").className="msg err";$("m1").textContent=t}
+function read(f){var r=new FileReader();r.onload=function(){load(String(r.result),f.name)};r.onerror=function(){fail("خواندن فایل ناموفق بود.")};r.readAsText(f)}
+function load(text,name){
+  var m=text.match(EXG_RE),h=text.match(EXH_RE);
+  if(!m){fail("این فایل نسخه‌ی مناسب نیست (بخش بازی‌های قابل مدیریت را ندارد). آخرین index.html را انتخاب کن.");return}
+  try{G=JSON.parse(m[2]||"[]");if(!Array.isArray(G))throw 0}catch(e){fail("اطلاعات بازی‌های داخل فایل خراب است.");return}
+  hasH=!!h;HIDE=[];if(h){try{HIDE=JSON.parse(h[2]||"[]")}catch(e){HIDE=[]}}
+  var pm=text.match(EXP_RE);hasP=!!pm;P=[];if(pm){try{P=JSON.parse(pm[2]||"[]");if(!Array.isArray(P))P=[]}catch(e){P=[]}}
+  BUILT=[];
+  try{var d=new DOMParser().parseFromString(text,"text/html");[].forEach.call(d.querySelectorAll("#grid .gc"),function(a){var s=(a.getAttribute("href")||"").replace(/^#/,"");if(s)BUILT.push({slug:s,name:a.getAttribute("data-n")||a.textContent.trim()})})}catch(e){}
+  SRC=text;dirty=false;$("chg").textContent="بدون تغییر";$("save").disabled=true;
+  $("m1").className="msg";$("m1").textContent="فایل «"+name+"» باز شد.";
+  $("work").hidden=false;$("bar").hidden=false;renderAll()
+}
+
+/* lists */
+function renderAll(){
+  var l=$("list"),hl=$("hidList"),shown=0;l.textContent="";hl.textContent="";
+  BUILT.forEach(function(b){
+    if(HIDE.indexOf(b.slug)>-1)return;
+    var r=el("div","row"),n=el("span","n",b.name),s=el("small",null,"بازی اصلی"),x=el("button",null,"حذف");
+    n.appendChild(s);x.type="button";x.disabled=!hasH;
+    x.onclick=function(){if(!confirm("«"+b.name+"» از سایت حذف شود؟"))return;HIDE.push(b.slug);setDirty();renderAll()};
+    r.appendChild(n);r.appendChild(x);l.appendChild(r);shown++
+  });
+  G.forEach(function(g){
+    var r=el("div","row"),n=el("span","n",g.name),x=el("button",null,"حذف");
+    if(okImg(g.cover)){var im=el("img");im.alt="";im.src=g.cover;r.appendChild(im)}
+    n.appendChild(el("small",null,"افزوده‌شده"));x.type="button";
+    x.onclick=function(){if(!confirm("«"+g.name+"» حذف شود؟"))return;G=G.filter(function(k){return k.id!==g.id});setDirty();renderAll()};
+    r.appendChild(n);r.appendChild(x);l.appendChild(r);shown++
+  });
+  if(!shown)l.appendChild(el("p","h","بازی‌ای در سایت نیست."));
+  var hid=BUILT.filter(function(b){return HIDE.indexOf(b.slug)>-1});
+  hid.forEach(function(b){
+    var r=el("div","row"),n=el("span","n",b.name),x=el("button","ok","بازگردانی");x.type="button";
+    x.onclick=function(){HIDE=HIDE.filter(function(k){return k!==b.slug});setDirty();renderAll()};
+    r.appendChild(n);r.appendChild(x);hl.appendChild(r)
+  });
+  $("hidWrap").hidden=!hid.length;$("noHid").hidden=hasH;
+  var pl=$("plist");pl.textContent="";$("paidNote").hidden=hasP;
+  P.forEach(function(p){var r=el("div","row"),n=el("span","n",p.name),x=el("button",null,"حذف");
+    if(okImg(p.cover)){var im=el("img");im.alt="";im.src=p.cover;r.appendChild(im)}
+    n.appendChild(el("small",null,p.price?("پولی • "+p.price):"پولی"));x.type="button";
+    x.onclick=function(){if(!confirm("«"+p.name+"» حذف شود؟"))return;P=P.filter(function(k){return k.id!==p.id});setDirty();renderAll()};
+    r.appendChild(n);r.appendChild(x);pl.appendChild(r)});
+  if(!P.length&&hasP)pl.appendChild(el("p","h","بازی پولی‌ای اضافه نشده است."))
+}
+
+/* image slots: file / drag-drop / Ctrl+V */
+var SLOT={},ACT=null;
+function setActive(s){ACT=s;Object.keys(SLOT).forEach(function(k){SLOT[k].root.classList.toggle("act",SLOT[k]===s)})}
+function mkSlot(id,multi,max){
+  var root=$(id),items=[],urls=[],prev=el("div","prev"),inp=document.createElement("input"),btn=el("button","sbtn","انتخاب فایل"),s;
+  inp.type="file";inp.accept="image/*";inp.multiple=!!multi;inp.hidden=true;btn.type="button";
+  root.appendChild(el("div",null,"اینجا کلیک کن و Ctrl+V بزن (عکس را کپی کرده باشی)، یا عکس را بکش و رها کن"));
+  root.appendChild(btn);root.appendChild(inp);root.appendChild(prev);
+  function draw(){urls.forEach(function(u){URL.revokeObjectURL(u)});urls=[];prev.textContent="";
+    items.forEach(function(f,i){var w=el("span","pv"),im=el("img"),x=el("button",null,"×"),u=URL.createObjectURL(f);urls.push(u);im.src=u;im.alt="";x.type="button";
+      x.onclick=function(e){e.stopPropagation();items.splice(i,1);draw()};w.appendChild(im);w.appendChild(x);prev.appendChild(w)})}
+  s={root:root,items:items,
+    add:function(list){list.forEach(function(f){if(!/^image\//.test(f.type))return;if(multi){if(items.length<max)items.push(f)}else{items.length=0;items.push(f)}});draw();setActive(s)},
+    clear:function(){items.length=0;draw()}};
+  btn.onclick=function(e){e.stopPropagation();setActive(s);inp.click()};
+  inp.onchange=function(){s.add([].slice.call(inp.files));inp.value=""};
+  root.addEventListener("click",function(){setActive(s)});
+  root.addEventListener("dragover",function(e){e.preventDefault()});
+  root.addEventListener("drop",function(e){e.preventDefault();s.add([].slice.call(e.dataTransfer.files))});
+  SLOT[id]=s;return s}
+mkSlot("s_cover",false,1);mkSlot("s_shots",true,6);mkSlot("s_pcover",false,1);setActive(SLOT.s_cover);
+document.addEventListener("paste",function(e){
+  var cd=e.clipboardData,fs;if(!cd)return;
+  fs=[].slice.call(cd.files||[]).filter(function(f){return /^image\//.test(f.type)});
+  if(!fs.length||!ACT||$("work").hidden)return;
+  e.preventDefault();ACT.add(fs)});
+
+/* add */
+function mkid(n){
+  var b=n.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,""),id,k=2;
+  if(!b||/^\d/.test(b))b="game-"+(b||Date.now().toString(36));
+  id=b;
+  function taken(i){return RESV[i]||BUILT.some(function(x){return x.slug===i})||G.some(function(x){return x.id===i})}
+  while(taken(id))id=b+"-"+k++;
+  return id
+}
+function proc(f,w,q){return new Promise(function(res,rej){
+  var u=URL.createObjectURL(f),im=new Image();
+  im.onload=function(){var s=Math.min(1,w/im.width),c=document.createElement("canvas");c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext("2d").drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);var d=c.toDataURL("image/webp",q);if(d.indexOf("data:image/webp")!==0)d=c.toDataURL("image/jpeg",q);res(d)};
+  im.onerror=function(){rej()};im.src=u})}
+$("add").addEventListener("click",function(){
+  var m=$("m3"),name=$("f_name").value.trim(),url=$("f_url").value.trim(),files=SLOT.s_shots.items.slice(0,6),cf=SLOT.s_cover.items[0],btn=this;
+  m.className="msg";
+  if(!name){m.textContent="نام بازی را بنویس.";return}
+  if(!okUrl(url)){m.textContent="لینک دانلود باید با http:// یا https:// شروع شود.";return}
+  btn.disabled=true;m.textContent="در حال پردازش عکس‌ها...";
+  Promise.all(files.map(function(f){return proc(f,720,.6)}))
+  .then(function(shots){return Promise.all(files.map(function(f){return proc(f,200,.55)})).then(function(ths){return Promise.all([cf||files[0]].filter(Boolean).map(function(f){return proc(f,480,.62)})).then(function(cv){return{shots:shots,ths:ths,cover:cv[0]||""}})})})
+  .then(function(im){
+    G.push({id:mkid(name),name:name,genre:$("f_genre").value.trim(),lang:$("f_lang").value.trim(),plat:$("f_plat").value.trim(),dev:$("f_dev").value.trim(),tr:$("f_tr").value.trim(),src:$("f_src").value.trim(),desc:$("f_desc").value.trim(),url:url,fa:$("f_fa").checked,cover:im.cover,shots:im.shots,thumbs:im.ths});
+    ["f_name","f_genre","f_lang","f_plat","f_dev","f_tr","f_src","f_desc","f_url"].forEach(function(i){$(i).value=""});$("f_fa").checked=false;SLOT.s_cover.clear();SLOT.s_shots.clear();
+    m.textContent="«"+name+"» اضافه شد.";btn.disabled=false;setDirty();renderAll()})
+  .catch(function(){m.className="msg err";m.textContent="خواندن عکس‌ها ناموفق بود.";btn.disabled=false})
+});
+
+/* paid */
+$("addp").addEventListener("click",function(){
+  var m=$("mp"),name=$("p_name").value.trim(),url=$("p_url").value.trim(),price=$("p_price").value.trim().slice(0,40),f=SLOT.s_pcover.items[0],btn=this;m.className="msg";
+  if(!hasP){m.className="msg err";m.textContent="این فایل بخش پولی را ندارد؛ آخرین index.html را بده.";return}
+  if(!name){m.textContent="نام بازی را بنویس.";return}
+  if(!okUrl(url)){m.textContent="لینک باید با http:// یا https:// شروع شود.";return}
+  if(!price){m.textContent="قیمت بازی را بنویس.";return}
+  if(!f){m.textContent="عکس اصلی بازی را انتخاب کن.";return}
+  btn.disabled=true;m.textContent="در حال پردازش عکس...";
+  proc(f,480,.62).then(function(c){P.push({id:"p"+Date.now().toString(36),name:name,url:url,price:price,cover:c});
+    ["p_name","p_url","p_price"].forEach(function(i){$(i).value=""});SLOT.s_pcover.clear();m.textContent="«"+name+"» به بازی‌های پولی اضافه شد.";btn.disabled=false;setDirty();renderAll()})
+  .catch(function(){m.className="msg err";m.textContent="خواندن عکس ناموفق بود.";btn.disabled=false})
+});
+
+/* save */
+$("save").addEventListener("click",function(){
+  var out=SRC.replace(EXG_RE,function(x,a,b,c){return a+safeJson(G)+c});
+  if(hasH)out=out.replace(EXH_RE,function(x,a,b,c){return a+safeJson(HIDE)+c});
+  if(hasP)out=out.replace(EXP_RE,function(x,a,b,c){return a+safeJson(P)+c});
+  var u=URL.createObjectURL(new Blob([out],{type:"text/html"})),a=document.createElement("a");
+  a.href=u;a.download="index.html";document.body.appendChild(a);a.click();a.remove();
+  setTimeout(function(){URL.revokeObjectURL(u)},4000);
+  SRC=out;dirty=false;$("chg").textContent="ذخیره شد؛ فایل دانلودشده را جای index.html بگذار";$("save").disabled=true
+});
+</script>
+</body>
+</html>
